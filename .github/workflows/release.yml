@@ -59,6 +59,7 @@ jobs:
             echo "::error::Built app reports $BUILT but expected $EXPECTED"
             exit 1
           fi
+          codesign --verify --deep --strict --verbose=2 ".build/KeyClean.app"
           echo "Built app version $BUILT matches tag"
 
       - name: Create DMG

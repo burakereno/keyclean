@@ -8,6 +8,7 @@ CONTENTS_DIR="$APP_DIR/Contents"
 MACOS_DIR="$CONTENTS_DIR/MacOS"
 RESOURCES_DIR="$CONTENTS_DIR/Resources"
 APP_ICON="$ROOT_DIR/Sources/KeyClean/Resources/AppIcon.icns"
+CODESIGN_IDENTITY="${CODESIGN_IDENTITY:--}"
 MIN_MACOS_VERSION="${MIN_MACOS_VERSION:-14.0}"
 
 cd "$ROOT_DIR"
@@ -35,10 +36,6 @@ mkdir -p "$MACOS_DIR" "$RESOURCES_DIR"
 cp "$ROOT_DIR/.build/release/$APP_NAME" "$MACOS_DIR/$APP_NAME"
 chmod +x "$MACOS_DIR/$APP_NAME"
 
-RESOURCE_BUNDLE="$ROOT_DIR/.build/release/KeyClean_KeyClean.bundle"
-if [[ -d "$RESOURCE_BUNDLE" ]]; then
-  cp -R "$RESOURCE_BUNDLE" "$APP_DIR/"
-fi
 if [[ -f "$APP_ICON" ]]; then
   cp "$APP_ICON" "$RESOURCES_DIR/AppIcon.icns"
 fi
@@ -79,5 +76,7 @@ cat > "$CONTENTS_DIR/Info.plist" <<PLIST
 </dict>
 </plist>
 PLIST
+
+/usr/bin/codesign --force --deep --sign "$CODESIGN_IDENTITY" "$APP_DIR" >/dev/null
 
 echo "Built $APP_DIR"
