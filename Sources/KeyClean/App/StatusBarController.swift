@@ -19,10 +19,10 @@ final class StatusBarController: NSObject {
         popover.behavior = .transient
         popover.animates = true
         popover.appearance = NSAppearance(named: .darkAqua)
-        popover.contentSize = NSSize(width: 340, height: 268)
+        popover.contentSize = NSSize(width: 340, height: 286)
         popover.contentViewController = NSHostingController(
             rootView: StatusPanelView(appState: appState)
-                .frame(width: 340, height: 268)
+                .frame(width: 340, height: 286)
         )
 
         if let button = statusItem.button {

@@ -45,7 +45,7 @@ struct StatusPanelView: View {
 
             footer
         }
-        .frame(width: 340, height: 268)
+        .frame(width: 340, height: 286)
         .preferredColorScheme(.dark)
         .onAppear {
             appState.refreshPermissions()
@@ -170,7 +170,7 @@ struct StatusPanelView: View {
     }
 
     private var footer: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 10) {
             if updater.updateAvailable, let latestVersion = updater.latestVersion {
                 UpdateButton(version: latestVersion)
             } else {
@@ -185,10 +185,10 @@ struct StatusPanelView: View {
                 Text(appState.isLocked ? "Unlock first" : "Quit")
                     .font(.system(size: 10, weight: .semibold))
                     .foregroundStyle(appState.isLocked ? .tertiary : .secondary)
-                    .padding(.horizontal, 17)
-                    .padding(.vertical, 6)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
                     .background {
-                        RoundedRectangle(cornerRadius: 5)
+                        RoundedRectangle(cornerRadius: 4)
                             .fill(Color.primary.opacity(0.06))
                     }
             }
@@ -196,7 +196,7 @@ struct StatusPanelView: View {
             .disabled(appState.isLocked)
         }
         .padding(.horizontal, 14)
-        .padding(.vertical, 4)
+        .padding(.vertical, 8)
     }
 
     private var footerVersionStatus: some View {
