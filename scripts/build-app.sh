@@ -77,6 +77,10 @@ cat > "$CONTENTS_DIR/Info.plist" <<PLIST
 </plist>
 PLIST
 
-/usr/bin/codesign --force --deep --sign "$CODESIGN_IDENTITY" "$APP_DIR" >/dev/null
+CODESIGN_ARGS=(--force --deep --options runtime --sign "$CODESIGN_IDENTITY")
+if [[ "$CODESIGN_IDENTITY" != "-" ]]; then
+  CODESIGN_ARGS+=(--timestamp)
+fi
+/usr/bin/codesign "${CODESIGN_ARGS[@]}" "$APP_DIR" >/dev/null
 
 echo "Built $APP_DIR"

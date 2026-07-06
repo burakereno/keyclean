@@ -29,11 +29,7 @@ KeyClean is a tiny macOS menu bar utility that temporarily blocks keyboard input
 2. Open the DMG and drag **KeyClean.app** to Applications.
 3. Launch KeyClean. It appears as a small lock icon in the menu bar.
 
-If macOS blocks the first launch because the app was downloaded outside the App Store, run:
-
-```bash
-xattr -cr "/Applications/KeyClean.app"
-```
+Release downloads are Developer ID signed and notarized.
 
 ## Permissions
 
@@ -68,4 +64,6 @@ Build a release-style app bundle:
 ./scripts/build-app.sh
 ```
 
-Release builds are created automatically by GitHub Actions on pushes to `main`. The workflow increments the patch version, tags the commit, builds `KeyClean.app`, packages `KeyClean.dmg`, and publishes a GitHub release.
+Release builds are created automatically by GitHub Actions on pushes to `main`. The workflow increments the patch version, tags the commit, builds a Developer ID signed and notarized `KeyClean.app`, packages `KeyClean.dmg`, notarizes and staples the DMG, and publishes a GitHub release.
+
+Signing setup is documented in [docs/release-signing.md](docs/release-signing.md).
