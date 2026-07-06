@@ -13,7 +13,10 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "KeyClean",
-            path: "Sources/KeyClean"
+            path: "Sources/KeyClean",
+            resources: [
+                .process("Resources")
+            ]
         )
     ]
 )

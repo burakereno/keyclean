@@ -1,6 +1,10 @@
 # KeyClean
 
 <p align="center">
+  <img src="docs/icon.png" alt="KeyClean" width="340" height="340">
+</p>
+
+<p align="center">
   <a href="https://github.com/burakereno/keyclean/releases/latest/download/KeyClean.dmg">
     <img src="https://img.shields.io/badge/download-KeyClean.dmg-1f9cf0?style=for-the-badge" alt="Download KeyClean">
   </a>
