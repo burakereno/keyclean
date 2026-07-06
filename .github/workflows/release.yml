@@ -154,11 +154,7 @@ jobs:
 
       - name: Create DMG
         run: |
-          mkdir -p dmg_source
-          cp -R ".build/KeyClean.app" dmg_source/
-          ln -s /Applications dmg_source/Applications
-          hdiutil create -volname "KeyClean" -srcfolder dmg_source -ov -format UDZO KeyClean.dmg
-          rm -rf dmg_source
+          ./scripts/create-dmg.sh ".build/KeyClean.app" KeyClean.dmg
           codesign --force --sign "${{ steps.signing.outputs.identity }}" --timestamp KeyClean.dmg
 
       - name: Notarize DMG
