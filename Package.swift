@@ -17,6 +17,11 @@ let package = Package(
             resources: [
                 .process("Resources")
             ]
+        ),
+        .testTarget(
+            name: "KeyCleanTests",
+            dependencies: ["KeyClean"],
+            path: "Tests/KeyCleanTests"
         )
     ]
 )
