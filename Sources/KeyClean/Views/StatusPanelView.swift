@@ -3,13 +3,25 @@ import SwiftUI
 
 struct StatusPanelView: View {
     @ObservedObject var appState: KeyCleanState
+    let onPreferredHeightChange: (CGFloat) -> Void
     @ObservedObject private var updater = UpdateChecker.shared
     @State private var showSettings = false
     @State private var showFooterUpToDate = false
+    @State private var headerHeight: CGFloat = 0
+    @State private var dashboardContentHeight: CGFloat = 0
+    @State private var settingsContentHeight: CGFloat = 0
+    @State private var footerHeight: CGFloat = 0
+    @State private var lastReportedHeight: CGFloat = 0
 
     var body: some View {
         VStack(spacing: 0) {
             header
+                .onGeometryChange(for: CGFloat.self) { proxy in
+                    proxy.size.height
+                } action: { height in
+                    headerHeight = height
+                    reportPreferredHeight()
+                }
 
             Divider().opacity(0.5)
 
@@ -19,6 +31,12 @@ struct StatusPanelView: View {
                         settingsContent
                             .padding(.horizontal, 12)
                             .padding(.vertical, 10)
+                            .onGeometryChange(for: CGFloat.self) { proxy in
+                                proxy.size.height
+                            } action: { height in
+                                settingsContentHeight = height
+                                reportPreferredHeight()
+                            }
                     }
                     .transition(.asymmetric(
                         insertion: .move(edge: .trailing).combined(with: .opacity),
@@ -29,6 +47,12 @@ struct StatusPanelView: View {
                         content
                             .padding(.horizontal, 12)
                             .padding(.vertical, 10)
+                            .onGeometryChange(for: CGFloat.self) { proxy in
+                                proxy.size.height
+                            } action: { height in
+                                dashboardContentHeight = height
+                                reportPreferredHeight()
+                            }
                     }
                     .scrollIndicators(.never)
                     .transition(.asymmetric(
@@ -44,12 +68,33 @@ struct StatusPanelView: View {
             Divider().opacity(0.5)
 
             footer
+                .onGeometryChange(for: CGFloat.self) { proxy in
+                    proxy.size.height
+                } action: { height in
+                    footerHeight = height
+                    reportPreferredHeight()
+                }
         }
-        .frame(width: 340, height: 286)
+        .frame(width: KeyCleanPopoverLayout.width)
         .preferredColorScheme(.dark)
+        .onChange(of: showSettings) { _, _ in
+            reportPreferredHeight()
+        }
         .onAppear {
             appState.refreshPermissions()
         }
+    }
+
+    private func reportPreferredHeight() {
+        let contentHeight = showSettings ? settingsContentHeight : dashboardContentHeight
+        guard headerHeight > 0, contentHeight > 0, footerHeight > 0 else { return }
+
+        let dividerHeights: CGFloat = 2
+        let preferredHeight = ceil(headerHeight + contentHeight + footerHeight + dividerHeights)
+        guard abs(lastReportedHeight - preferredHeight) > 0.5 else { return }
+
+        lastReportedHeight = preferredHeight
+        onPreferredHeightChange(preferredHeight)
     }
 
     private var header: some View {

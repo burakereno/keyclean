@@ -2,6 +2,18 @@ import AppKit
 import Combine
 import SwiftUI
 
+enum KeyCleanPopoverLayout {
+    static let width: CGFloat = 340
+    static let initialHeight: CGFloat = 286
+    static let minimumHeight: CGFloat = 200
+    static let screenEdgeMargin: CGFloat = 24
+
+    static func clampedHeight(_ preferredHeight: CGFloat, visibleScreenHeight: CGFloat) -> CGFloat {
+        let maximumHeight = max(minimumHeight, visibleScreenHeight - screenEdgeMargin)
+        return min(max(preferredHeight, minimumHeight), maximumHeight)
+    }
+}
+
 @MainActor
 final class StatusBarController: NSObject {
     private let appState: KeyCleanState
@@ -9,6 +21,7 @@ final class StatusBarController: NSObject {
     private let popover = NSPopover()
     private var cancellables = Set<AnyCancellable>()
     private var symbolCache: [String: NSImage] = [:]
+    private var preferredPopoverHeight = KeyCleanPopoverLayout.initialHeight
     private let symbolConfig = NSImage.SymbolConfiguration(pointSize: 13, weight: .medium)
 
     init(appState: KeyCleanState) {
@@ -19,10 +32,18 @@ final class StatusBarController: NSObject {
         popover.behavior = .transient
         popover.animates = true
         popover.appearance = NSAppearance(named: .darkAqua)
-        popover.contentSize = NSSize(width: 340, height: 286)
+        popover.contentSize = NSSize(
+            width: KeyCleanPopoverLayout.width,
+            height: KeyCleanPopoverLayout.initialHeight
+        )
         popover.contentViewController = NSHostingController(
-            rootView: StatusPanelView(appState: appState)
-                .frame(width: 340, height: 286)
+            rootView: StatusPanelView(
+                appState: appState,
+                onPreferredHeightChange: { [weak self] height in
+                    self?.updatePopoverHeight(height)
+                }
+            )
+            .frame(width: KeyCleanPopoverLayout.width)
         )
 
         if let button = statusItem.button {
@@ -55,9 +76,28 @@ final class StatusBarController: NSObject {
             popover.performClose(sender)
         } else {
             appState.refreshPermissions()
+            applyPreferredPopoverHeight(for: sender.window?.screen)
             popover.show(relativeTo: sender.bounds, of: sender, preferredEdge: .minY)
             popover.contentViewController?.view.window?.makeKey()
         }
+    }
+
+    private func updatePopoverHeight(_ preferredHeight: CGFloat) {
+        preferredPopoverHeight = preferredHeight
+        applyPreferredPopoverHeight(for: statusItem.button?.window?.screen)
+    }
+
+    private func applyPreferredPopoverHeight(for screen: NSScreen?) {
+        let visibleScreenHeight = screen?.visibleFrame.height
+            ?? NSScreen.main?.visibleFrame.height
+            ?? preferredPopoverHeight
+        let height = KeyCleanPopoverLayout.clampedHeight(
+            preferredPopoverHeight,
+            visibleScreenHeight: visibleScreenHeight
+        )
+
+        guard abs(popover.contentSize.height - height) > 0.5 else { return }
+        popover.contentSize = NSSize(width: KeyCleanPopoverLayout.width, height: height)
     }
 
     private func showContextMenu(from button: NSStatusBarButton) {
