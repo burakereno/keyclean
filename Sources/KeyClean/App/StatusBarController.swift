@@ -76,6 +76,7 @@ final class StatusBarController: NSObject {
             popover.performClose(sender)
         } else {
             appState.refreshPermissions()
+            appState.loginItemManager.refresh()
             applyPreferredPopoverHeight(for: sender.window?.screen)
             popover.show(relativeTo: sender.bounds, of: sender, preferredEdge: .minY)
             popover.contentViewController?.view.window?.makeKey()

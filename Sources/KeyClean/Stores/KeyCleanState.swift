@@ -7,6 +7,7 @@ final class KeyCleanState: ObservableObject {
     @Published private(set) var lastError: String?
 
     let keyboardBlocker = KeyboardBlocker()
+    let loginItemManager = LoginItemManager()
     private var permissionRefreshTask: Task<Void, Never>?
 
     var canAttemptLock: Bool {

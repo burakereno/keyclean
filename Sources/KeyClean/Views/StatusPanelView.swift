@@ -158,6 +158,10 @@ struct StatusPanelView: View {
 
     private var settingsContent: some View {
         VStack(alignment: .leading, spacing: 8) {
+            SettingsSectionView(title: "GENERAL") {
+                LoginItemRow(manager: appState.loginItemManager)
+            }
+
             SettingsSectionView(title: "PERMISSIONS") {
                 PermissionRow(
                     icon: "figure.wave.circle",
@@ -297,6 +301,51 @@ struct StatusPanelView: View {
 
     private var appVersion: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0"
+    }
+}
+
+private struct LoginItemRow: View {
+    @ObservedObject var manager: LoginItemManager
+
+    var body: some View {
+        HStack(spacing: 9) {
+            Image(systemName: "power")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(.secondary)
+                .frame(width: 20)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Open at Login")
+                    .font(.system(size: 12, weight: .semibold))
+
+                Text(manager.statusMessage)
+                    .font(.system(size: 9.5, weight: .medium))
+                    .foregroundStyle(
+                        manager.lastError == nil
+                            ? Color.secondary.opacity(0.65)
+                            : Color.orange
+                    )
+                    .lineLimit(2)
+            }
+
+            Spacer(minLength: 8)
+
+            Toggle(
+                "Open at Login",
+                isOn: Binding(
+                    get: { manager.isEnabled },
+                    set: { manager.setEnabled($0) }
+                )
+            )
+            .labelsHidden()
+            .toggleStyle(.switch)
+            .controlSize(.small)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical, 3)
+        .onAppear {
+            manager.refresh()
+        }
     }
 }
 
