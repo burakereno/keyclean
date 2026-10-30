@@ -64,6 +64,12 @@ Build a release-style app bundle:
 ./scripts/build-app.sh
 ```
 
+The icon artwork lives in `docs/icon.png`. After replacing it, regenerate the macOS icon with:
+
+```bash
+xcrun swift scripts/generate-app-icon.swift
+```
+
 Release builds are created automatically by GitHub Actions on pushes to `main`. The workflow increments the patch version, tags the commit, builds a Developer ID signed and notarized `KeyClean.app`, packages `KeyClean.dmg`, notarizes and staples the DMG, and publishes a GitHub release.
 
 Signing setup is documented in [docs/release-signing.md](docs/release-signing.md).
