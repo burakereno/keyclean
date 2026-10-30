@@ -1,7 +1,7 @@
 # KeyClean
 
 <p align="center">
-  <img src="docs/icon.png" alt="KeyClean" width="340" height="340">
+  <img src="https://keyclean.burakerenoglu.com/apps/keyclean/icon-rounded-20261030.webp" alt="KeyClean" width="340" height="340">
 </p>
 
 <p align="center">
